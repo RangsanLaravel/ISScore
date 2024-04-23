@@ -1,0 +1,53 @@
+﻿@model ISScore.Models.Search
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>ค้นหารหัสพนักงาน</h1>
+
+<h4>Search</h4>
+<hr />
+<div class="row">
+        <form  asp-action="Index" asp-antiforgery="true" method="post">
+        <div class="d-flex justify-content-center bd-highlight mb-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="p-2">
+                <label asp-for="EMPLOYEE_ID" class="control-label"></label>
+            </div>
+            <div class="p-2">
+                <input asp-for="EMPLOYEE_ID" class="form-control" placeholder="Employee id" autocomplete="off" />
+                <span asp-validation-for="EMPLOYEE_ID" class="text-danger"></span>
+            </div>
+            <div class="p-2">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </div>        
+        </form>
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Eployee id</th>
+                <th scope="col">Name</th>
+                <th scope="col">HQ Mock Test #1</th>
+                <th scope="col">Desk Check1</th>
+                <th scope="col">Desk Check2</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.DataSearch  != null){
+                var data = (ISScore.Models.RenderDetail)ViewBag.DataSearch;
+                <tr>
+                    <td>@data.Employee_id</td>
+                    <td>@data.Name</td>
+                    <td>@data.HQ_Mock_test</td>
+                    <td>@data.Desk_Check1</td>
+                    <td>@data.Desk_Check2</td>
+                </tr>
+            }     
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
