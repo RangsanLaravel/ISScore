@@ -58,7 +58,7 @@ namespace ISScore.Controllers
             DataTable dataTable = new DataTable();
             try
             {
-                await _sqlConnection.OpenAsync();
+                _sqlConnection.Open();
 
                 SqlCommand sqlCommand = new SqlCommand
                 {
@@ -69,7 +69,7 @@ namespace ISScore.Controllers
                 sqlCommand.Parameters.AddWithValue("@E_CO", search.EMPLOYEE_ID);
 
                 // Execute the command asynchronously
-                using (SqlDataReader sqlDataReader = await sqlCommand.ExecuteReaderAsync())
+                using (SqlDataReader sqlDataReader =  sqlCommand.ExecuteReader())
                 {
                     // Load data into DataTable
                     dataTable.Load(sqlDataReader);
