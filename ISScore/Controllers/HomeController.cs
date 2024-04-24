@@ -31,22 +31,31 @@ namespace ISScore.Controllers
         [HttpPost]
         public IActionResult Index(Search search)
         {
-            if (!ModelState.IsValid)
+            try
             {
+                if (!ModelState.IsValid)
+                {
+                    return View(search);
+                }
+                //RenderDetail detail = new RenderDetail
+                //{
+                //    Name = "Mr.Sivawut Tatan",
+                //    Employee_id = search.EMPLOYEE_ID,
+                //    Desk_Check1 = "0",
+                //    Desk_Check2 = "0",
+                //    HQ_Mock_test = "1"
+                //};
+                var dt = Query(search);
+                ViewBag.ColumnHeader = GetColumnHeaders(dt);
+                ViewBag.DataSearch = dt;
                 return View(search);
             }
-            //RenderDetail detail = new RenderDetail
-            //{
-            //    Name = "Mr.Sivawut Tatan",
-            //    Employee_id = search.EMPLOYEE_ID,
-            //    Desk_Check1 = "0",
-            //    Desk_Check2 = "0",
-            //    HQ_Mock_test = "1"
-            //};
-            var dt = Query(search);
-            ViewBag.ColumnHeader = GetColumnHeaders(dt);
-            ViewBag.DataSearch = dt;
-            return View(search);
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View("Error");
+            }
+            
         }
         public IActionResult Privacy()
         {
