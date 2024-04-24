@@ -27,24 +27,30 @@
     <table class="table">
         <thead class="table-dark">
             <tr>
-                <th scope="col">Eployee id</th>
-                <th scope="col">Name</th>
-                <th scope="col">HQ Mock Test #1</th>
-                <th scope="col">Desk Check1</th>
-                <th scope="col">Desk Check2</th>
+                @if (ViewBag.ColumnHeader != null)
+                {
+                    var header = (List<string>)ViewBag.ColumnHeader;
+                    for (int i = 0; i < header.Count; i++)
+                    {
+                        <th scope="col">@header[i]</th>
+                    }
+                }                
             </tr>
         </thead>
         <tbody>
-            @if (ViewBag.DataSearch  != null){
-                var data = (ISScore.Models.RenderDetail)ViewBag.DataSearch;
-                <tr>
-                    <td>@data.Employee_id</td>
-                    <td>@data.Name</td>
-                    <td>@data.HQ_Mock_test</td>
-                    <td>@data.Desk_Check1</td>
-                    <td>@data.Desk_Check2</td>
-                </tr>
-            }     
+            @if (ViewBag.DataSearch != null)
+            {
+                var data = ViewBag.DataSearch as System.Data.DataTable;
+                foreach (System.Data.DataRow row in data.Rows)
+                {
+                    <tr>
+                        @foreach (System.Data.DataColumn col in data.Columns)
+                        {
+                            <td>@row[col.ColumnName]</td>
+                        }
+                    </tr>
+                }
+            }
         </tbody>
     </table>
 </div>

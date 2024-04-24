@@ -1,6 +1,10 @@
 using ISScore.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace ISScore.Controllers
 {
@@ -8,9 +12,16 @@ namespace ISScore.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly string _ConnectionString;
+        private readonly SqlConnection _sqlConnection;
+        private readonly IConfiguration _configuration;
+
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _ConnectionString = configuration.GetConnectionString("ConnectionSQLServer");
+            this._sqlConnection = new SqlConnection(_ConnectionString);
+            this._configuration = configuration;
         }
 
         public IActionResult Index()
@@ -24,18 +35,68 @@ namespace ISScore.Controllers
             {
                 return View(search);
             }
-            RenderDetail detail = new RenderDetail { Name = "Mr.Sivawut Tatan",
-                Employee_id =search.EMPLOYEE_ID,
-                Desk_Check1 ="0",
-                Desk_Check2="0",
-                HQ_Mock_test ="1"
-            };
-            ViewBag.DataSearch = detail;
+            //RenderDetail detail = new RenderDetail
+            //{
+            //    Name = "Mr.Sivawut Tatan",
+            //    Employee_id = search.EMPLOYEE_ID,
+            //    Desk_Check1 = "0",
+            //    Desk_Check2 = "0",
+            //    HQ_Mock_test = "1"
+            //};
+            var dt = Query(search);
+            ViewBag.ColumnHeader = GetColumnHeaders(dt);
+            ViewBag.DataSearch = dt;
             return View(search);
         }
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        private DataTable Query(Search search)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                await _sqlConnection.OpenAsync();
+
+                SqlCommand sqlCommand = new SqlCommand
+                {
+                    CommandType = System.Data.CommandType.Text,
+                    Connection = this._sqlConnection,
+                    CommandText = this._configuration["Query"]
+                };
+                sqlCommand.Parameters.AddWithValue("@E_CO", search.EMPLOYEE_ID);
+
+                // Execute the command asynchronously
+                using (SqlDataReader sqlDataReader = await sqlCommand.ExecuteReaderAsync())
+                {
+                    // Load data into DataTable
+                    dataTable.Load(sqlDataReader);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                _sqlConnection.Close();
+            }
+
+            return dataTable;
+        }
+
+        private List<string> GetColumnHeaders(DataTable dataTable)
+        {
+            List<string> columnHeaders = new List<string>();
+
+            foreach (DataColumn column in dataTable.Columns)
+            {
+                columnHeaders.Add(column.ColumnName);
+            }
+
+            return columnHeaders;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
