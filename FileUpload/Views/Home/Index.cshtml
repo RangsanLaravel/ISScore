@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<h1>Preview file input</h1>
+<form asp-controller="Home" asp-action="Upload" method="post" enctype="multipart/form-data">
+    <label class="input-preview" for="img">
+        <input class="input-preview__src" id="img" name="img" type="file" accept=".jpg, .jpeg, .png" />
+    </label>
+    <div class="pt-2">
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        const fileImage = document.querySelector('.input-preview__src');
+        const filePreview = document.querySelector('.input-preview');
+
+        fileImage.onchange = function () {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                // get loaded data and render thumbnail.
+                filePreview.style.backgroundImage = "url(" + e.target.result + ")";
+                filePreview.classList.add("has-image");
+            };
+
+            // read the image file as a data URL.
+            reader.readAsDataURL(this.files[0]);
+        };
+    </script>
+
+}
