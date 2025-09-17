@@ -6,7 +6,6 @@ using System.Diagnostics;
 namespace FileUpload.Controllers
 {
 
-    [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
