@@ -6,6 +6,7 @@ using System.Diagnostics;
 namespace FileUpload.Controllers
 {
 
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -14,8 +15,6 @@ namespace FileUpload.Controllers
         {
             _logger = logger;
         }
-
-        [Route("Index")]
         public IActionResult Index()
         {
             return View();
@@ -28,7 +27,6 @@ namespace FileUpload.Controllers
         }
 
         [HttpPost]
-        [Route("Upload")]
         public async Task<IActionResult> Upload(IFormFile img)
         {
             if (img != null && img.Length > 0)
