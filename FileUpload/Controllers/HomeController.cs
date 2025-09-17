@@ -5,6 +5,8 @@ using System.Diagnostics;
 
 namespace FileUpload.Controllers
 {
+
+    [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -14,15 +16,20 @@ namespace FileUpload.Controllers
             _logger = logger;
         }
 
+        [Route("Index")]
         public IActionResult Index()
         {
             return View();
         }
+
+        [Route("tv")]   // <<==== แบบนี้
         public IActionResult ViewImages()
         {
             return View();
         }
+
         [HttpPost]
+        [Route("Upload")]
         public async Task<IActionResult> Upload(IFormFile img)
         {
             if (img != null && img.Length > 0)
@@ -33,17 +40,8 @@ namespace FileUpload.Controllers
                     await img.CopyToAsync(stream);
                 }
             }
-            return RedirectToAction("ViewImages","Home");
-        }
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return RedirectToAction("ViewImages", "Home");
         }
     }
+
 }
